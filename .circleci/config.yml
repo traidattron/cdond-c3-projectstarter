@@ -209,9 +209,9 @@ jobs:
             export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=60
             cd .circleci/ansible
 
-            ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
-      - destroy-environment
+            ansible-playbook -i inventory.txt configure-server.yml -v
+           
+      # - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
