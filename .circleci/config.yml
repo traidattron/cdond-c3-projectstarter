@@ -139,9 +139,6 @@ jobs:
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
-        # auth:
-        #   username: $DOCKERHUB_USERNAME
-        #   password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - run: yum install -y tar gzip
@@ -183,6 +180,7 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git
+      
       - checkout
       
       # Add ssh keys with fingerprint
@@ -197,6 +195,10 @@ jobs:
             apk add --update tar gzip ansible
             # Your code here
             pip install awscli
+      - run:
+          name: test
+          command: |
+            echo 'hell here'
       - run:
           name: Configure server
           command: |
