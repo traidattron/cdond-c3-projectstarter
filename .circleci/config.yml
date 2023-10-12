@@ -252,8 +252,8 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - attach_workspace:
-          at: ~/
+      # - attach_workspace:
+      #     at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -274,6 +274,10 @@ jobs:
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
             echo "${API_URL}"
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
