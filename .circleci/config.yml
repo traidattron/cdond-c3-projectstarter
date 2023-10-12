@@ -174,10 +174,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment 
-      - run:
-          name: test
-          command: |
-            echo 'hell here'
+    
 
   configure-infrastructure:
     docker:
@@ -199,10 +196,7 @@ jobs:
             apk add --update tar gzip ansible
             # Your code here
             pip install awscli
-      - run:
-          name: test
-          command: |
-            echo 'hell here'
+    
       - run:
           name: Configure server
           command: |
