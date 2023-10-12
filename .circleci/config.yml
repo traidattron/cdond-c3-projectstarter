@@ -173,7 +173,11 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment      
+      - destroy-environment 
+      - run:
+          name: test
+          command: |
+            echo 'hell here'
 
   configure-infrastructure:
     docker:
