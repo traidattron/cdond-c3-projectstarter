@@ -329,7 +329,7 @@ jobs:
             cd backend
             npm install
             echo "--- Backend variables ---"
-            cat ~/project/backend/.env
+            # cat ~/project/backend/.env
             npm run build
       - run:
           name: Create backend artifact
