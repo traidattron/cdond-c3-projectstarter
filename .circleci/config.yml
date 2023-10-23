@@ -311,15 +311,37 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm ansible curl
-            pip install awscli
+            # apk add --update --no-cache tar gzip nodejs npm ansible curl
+            # pip install awscli
+            # npm install pm2 -g
+            apk update
+            apk add --update ansible
+            apk add --no-cache tar npm gzip curl gcompat
+            apk add --no-cache python3 py3-pip
+            pip3 install --upgrade pip
+            pip3 install awscli
+            rm -rf /var/cache/apk/*
             # your code here
+      - run:
+          name: Build backend
+          command: |
+            sed 's/local/production/g' ~/project/backend/.env
+            cd backend
+            npm install
+            echo "--- Backend variables ---"
+            cat ~/project/backend/.env
+            npm run build
+      - run:
+          name: Create backend artifact
+          command: |
+            tar czf backend-artifact.tar.gz backend
       - run:
           name: Deploy backend
           command: |
             # your code here
             cd backend
             npm install
+           
             npm run build
             cd ..
             echo ENVIROMENT=production > "backend/.env"
