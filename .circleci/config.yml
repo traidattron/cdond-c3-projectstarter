@@ -334,7 +334,8 @@ jobs:
       - run:
           name: Create backend artifact
           command: |
-            tar czf backend-artifact.tar.gz backend
+            # tar czf backend-artifact.tar.gz backend
+            tar -C backend -czvf artifact.tar.gz .
       - run:
           name: Deploy backend
           command: |
