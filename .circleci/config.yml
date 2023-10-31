@@ -297,7 +297,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.11-rc-alpine
+      - image: python:3.7-alpine3.11
       # Docker image here that supports Ansible
     steps:
       - checkout
@@ -305,63 +305,41 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["c9:40:89:fb:99:7b:43:18:fe:50:52:47:a9:47:07:11"]
       # Add ssh keys with fingerprint
-      - attach_workspace:
-          at: ~/
-      # attach workspace
       - run:
           name: Install dependencies
           command: |
-            # apk add --update --no-cache tar gzip nodejs npm ansible curl
-            # pip install awscli
-            # npm install pm2 -g
-            apk update
-            apk add --update ansible
-            apk add --no-cache tar npm gzip curl gcompat
-            apk add --no-cache python3 py3-pip
-            pip3 install --upgrade pip
-            pip3 install awscli
-            rm -rf /var/cache/apk/*
-            # your code here
-      - run:
-          name: Build backend
-          command: |
-            # sed 's/local/production/g' ~/project/backend/.env
-            cd backend
-            npm install
-            echo "--- Backend variables ---"
-            # cat ~/project/backend/.env
-            npm run build
-      - run:
-          name: Create backend artifact
-          command: |
-            # tar czf backend-artifact.tar.gz backend
-            tar -C backend -czvf artifact.tar.gz .
+            # apk add --update ansible nodejs npm rsync openssh
+            apk add --update --no-cache tar gzip nodejs npm ansible curl
+            pip install awscli
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Deploy backend
           command: |
-            # your code here
-            # cd backend
-            # npm install
-           
-            # npm run build
-            # cd ..
-            # echo ENVIROMENT=production > "backend/.env"
-            # echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> "backend/.env"
-            # echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
-            # echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> "backend/.env"
-            # echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            # echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            # echo "=== .env ===="
-            # tar -C backend -czvf artifact.tar.gz .
+            cd backend
+            npm install
+            npm run build
+            cd ..
+            echo ENVIROMENT=production > "backend/.env"
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo "=== .env ===="
+            cat backend/.env
+            tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
+            echo "Contents of the inventory.txt file is ----"
             cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment
+            ansible-playbook -i inventory.txt deploy-backend.yml  
       - revert-migrations
+      - destroy-environment 
       # Here's where you will add some code to rollback on failure  
 
   # smoke-test:
