@@ -345,7 +345,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: circleci/node:13.8.0
       # Lightweight Docker image 
     steps:
       # Checkout code from git
@@ -354,6 +354,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update curl
+            sudo apt install -y tar gzip curl unzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
