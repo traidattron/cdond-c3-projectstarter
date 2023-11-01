@@ -5,6 +5,13 @@ orbs:
   aws-cli: circleci/aws-cli@3.1.1
 
 commands:
+  print_pipeline_id:
+      steps:
+        - run:
+            name: Print workflow ID
+            # ${CIRCLE_WORKFLOW_ID:0:7} takes the first 7 chars of a Built-in environment variable
+            command:
+              echo ${CIRCLE_WORKFLOW_ID:0:7}
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -24,23 +31,24 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here  
-       workflow_id:
-          type: string
-          default: ${CIRCLE_WORKFLOW_ID:0:7}   
+      workflow_id:
+        type: string
     steps:
+      - print_pipeline_id
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Revert migrations
           when: on_fail
-          # Add when this will run
+          # Need generate token on https://kvdb.io first.
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            echo https://kvdb.io/DsnGRq3Cg1eadv8n4ziiXB/migration_<<parameters.workflow_id>>
-            SUCCESS = $(curl --insecure  https://kvdb.io/DsnGRq3Cg1eadv8n4ziiXB/migration_<<parameters.workflow_id>>)
-            ls
-            cd backend
-            npm install
-            npm run migrations:revert
+            echo "insecure" >> ~/.curlrc
+            SUCCESS=$(curl --insecure  https://kvdb.io/DsnGRq3Cg1eadv8n4ziiXB/migration_<< parameters.workflow_id >>)
+            if (( $SUCCESS == 1 ));
+            then
+              cd backend
+              npm run migrations:revert
+            fi
             
 jobs:
   build-frontend:
