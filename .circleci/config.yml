@@ -387,12 +387,12 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             
             echo "${API_URL}"
-            # if [ "$(curl -sL -w '%{http_code}' ${API_URL}/api/status -o /dev/null)" = "200" ];
-            # then
-            #     exit 0
-            # else
-            #     exit 1
-            # fi
+            if [ "$(curl -sL -w '%{http_code}' ${API_URL}/api/status -o /dev/null)" = "200" ];
+            then
+                exit 0
+            else
+                exit 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
