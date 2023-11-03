@@ -17,7 +17,10 @@
   become: yes
   shell:
     cmd: |
+      
       cd /home/ubuntu/backend
+      echo 'hell yeah'
+      cat .env
       npm install
       pm2 stop backend
       pm2 delete backend
