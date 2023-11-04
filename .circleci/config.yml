@@ -335,6 +335,7 @@ jobs:
           command: |
             cd backend
             npm install
+            echo '-------hell run build here---------'
             npm run build
             cd ..
             echo ENVIROMENT=production > "backend/.env"
