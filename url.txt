@@ -1,5 +1,0 @@
-[URL01]
-https://github.com/traidattron/cdond-c3-projectstarter
-
-[URL02]
-http://udapeople-06a2e00.s3-website-us-east-1.amazonaws.com
